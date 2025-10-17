@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Collections;
 
-namespace Grainium
+namespace Silt
 {
     public class PauseSystem
     {

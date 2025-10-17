@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Grainium
+namespace Silt
 {
     [System.Serializable]
     public sealed class InterfacePointer<T> where T : class

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Grainium
+namespace Silt
 {
     public static class InputExtension
     {

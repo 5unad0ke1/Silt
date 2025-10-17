@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Grainium.EditorEx
+namespace Silt.EditorEx
 {
     [CustomPropertyDrawer(typeof(InterfacePointer<>), true)]
     public class InterfacePointerDrawer : PropertyDrawer

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Grainium
+namespace Silt
 {
     internal static class PauseManager
     {
