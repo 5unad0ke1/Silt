@@ -1,65 +1,73 @@
 using System;
 using System.Collections.Generic;
-using Unity.Collections;
 
 namespace Silt
 {
-    public class PauseSystem
+    public sealed class PauseSystem<T> where T : notnull, Enum
     {
-        private readonly HashSet<IPausable> _hashSet = new();
-
-        private bool _isCanRegister = true;
-
-        public event Action OnPaused;
-        public event Action OnResumed;
-        public void Register(IPausable pausable)
+        public PauseSystem()
         {
-            if (!_isCanRegister)
-            {
-                throw new InvalidOperationException("Register() cannot be used during Pause() or Resume()");
-            }
-            if (_hashSet.Contains(pausable))
+            _reasons = default;
+            _pauseables = new HashSet<IPauseable<T>>();
+        }
+        public bool IsPaused()
+        {
+            return !_reasons.Equals(default(T));
+        }
+        public bool IsPaused(T filter)
+        {
+            return _reasons.HasFlag(filter);
+        }
+        public void AddReason(T value)
+        {
+            if (_locked)
                 return;
-            _hashSet.Add(pausable);
-        }
-        public void Unregister(IPausable pausable)
-        {
-            if (!_isCanRegister)
-            {
-                throw new InvalidOperationException("Unregister() cannot be used during Pause() or Resume()");
-            }
+            _locked = true;
 
-            _hashSet.Remove(pausable);
-        }
-        public void Pause()
-        {
-            _isCanRegister = false;
+            ulong v = Convert.ToUInt64(value);
+            ulong r = Convert.ToUInt64(_reasons);
+            _reasons = (T)Enum.ToObject(typeof(T), r | v);
 
-            foreach (var pausable in _hashSet)
+            foreach (var pauseable in _pauseables)
             {
-                pausable.OnPause();
+                pauseable.Pause(_reasons);
             }
-            OnPaused?.Invoke();
-            _isCanRegister = true;
+            _locked = false;
         }
-        public void Resume()
+        public void RemoveReason(T value)
         {
-            _isCanRegister = false;
-            foreach (var pausable in _hashSet)
+            if (_locked)
+                return;
+            _locked = true;
+
+            ulong v = Convert.ToUInt64(value);
+            ulong r = Convert.ToUInt64(_reasons);
+            _reasons = (T)Enum.ToObject(typeof(T), r & ~v);
+
+            foreach (var pauseable in _pauseables)
             {
-                pausable.OnResume();
+                pauseable.Resume(_reasons);
             }
-            OnResumed?.Invoke();
-            _isCanRegister = true;
+            _locked = false;
         }
+        public void Register(IPauseable<T> pauseable)
+        {
+            _pauseables.Add(pauseable);
+        }
+        public void Unregister(IPauseable<T> pauseable)
+        {
+            _pauseables.Remove(pauseable);
+        }
+
         public void Clear()
         {
-            _hashSet.Clear();
+            _pauseables.Clear();
+            _reasons = default;
         }
-    }
-    public interface IPausable
-    {
-        void OnPause();
-        void OnResume();
+
+        private bool _locked;
+        private T _reasons;
+        private readonly HashSet<IPauseable<T>> _pauseables;
+
     }
 }

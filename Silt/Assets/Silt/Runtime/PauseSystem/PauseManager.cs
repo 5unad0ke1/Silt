@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,7 +5,7 @@ namespace Silt
 {
     internal static class PauseManager
     {
-        public readonly static PauseSystem _system = new();
+        public readonly static PauseSystem<PauseReason> _system = new();
         static PauseManager()
         {
             Application.quitting += _system.Clear;
