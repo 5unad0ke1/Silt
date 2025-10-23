@@ -2,7 +2,7 @@ using System;
 
 namespace Silt
 {
-    public interface IPauseable<T>
+    public interface IPauseable
     {
         void Pause();
         void Resume();
