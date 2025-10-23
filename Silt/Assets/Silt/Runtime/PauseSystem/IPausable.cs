@@ -2,9 +2,9 @@ using System;
 
 namespace Silt
 {
-    public interface IPauseable<T> where T : notnull, Enum
+    public interface IPauseable<T>
     {
-        void Pause(T reason);
-        void Resume(T reason);
+        void Pause();
+        void Resume();
     }
 }
