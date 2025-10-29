@@ -41,7 +41,7 @@ namespace Silt
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void UpdatePauseState(Dictionary<IPauseable, ulong> data, ulong previousBits, ulong currentBits)
+        private static void UpdatePauseState(Dictionary<IPauseable, ulong> data, in ulong previousBits, in ulong currentBits)
         {
             bool wasPaused;
             bool isPaused;
