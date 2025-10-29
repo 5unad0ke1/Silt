@@ -1,73 +1,66 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Silt
 {
-    public sealed class PauseSystem<T> where T : notnull, Enum
+    public sealed class PauseSystem<T> where T : unmanaged, Enum
     {
-        public PauseSystem()
-        {
-            _reasons = default;
-            _pauseables = new HashSet<IPauseable<T>>();
-        }
         public bool IsPaused()
-        {
-            return !_reasons.Equals(default(T));
-        }
+            => _reasonBits != 0;
         public bool IsPaused(T filter)
+            => (_reasonBits & ToBits(filter)) != 0;
+        public void AddReason(T values)
         {
-            return _reasons.HasFlag(filter);
+            ulong previousBits = _reasonBits;
+            ulong currentBits = previousBits | ToBits(values);
+            _reasonBits = currentBits;
+
+            UpdatePauseState(_pauseables, previousBits, currentBits);
         }
-        public void AddReason(T value)
+        public void RemoveReason(T values)
         {
-            if (_locked)
-                return;
-            _locked = true;
+            ulong previousBits = _reasonBits;
+            ulong currentBits = previousBits & ~ToBits(values);
+            _reasonBits = currentBits;
 
-            ulong v = Convert.ToUInt64(value);
-            ulong r = Convert.ToUInt64(_reasons);
-            _reasons = (T)Enum.ToObject(typeof(T), r | v);
-
-            foreach (var pauseable in _pauseables)
-            {
-                pauseable.Pause(_reasons);
-            }
-            _locked = false;
+            UpdatePauseState(_pauseables, previousBits, currentBits);
         }
-        public void RemoveReason(T value)
+        public void Register(IPauseable pauseable, T filter)
         {
-            if (_locked)
-                return;
-            _locked = true;
-
-            ulong v = Convert.ToUInt64(value);
-            ulong r = Convert.ToUInt64(_reasons);
-            _reasons = (T)Enum.ToObject(typeof(T), r & ~v);
-
-            foreach (var pauseable in _pauseables)
-            {
-                pauseable.Resume(_reasons);
-            }
-            _locked = false;
+            _pauseables[pauseable] = ToBits(filter);
         }
-        public void Register(IPauseable<T> pauseable)
-        {
-            _pauseables.Add(pauseable);
-        }
-        public void Unregister(IPauseable<T> pauseable)
+        public void Unregister(IPauseable pauseable)
         {
             _pauseables.Remove(pauseable);
         }
-
         public void Clear()
         {
             _pauseables.Clear();
-            _reasons = default;
+            _reasonBits = 0;
         }
 
-        private bool _locked;
-        private T _reasons;
-        private readonly HashSet<IPauseable<T>> _pauseables;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void UpdatePauseState(Dictionary<IPauseable, ulong> data, ulong previousBits, ulong currentBits)
+        {
+            bool wasPaused;
+            bool isPaused;
 
+            foreach (var item in data)
+            {
+                wasPaused = previousBits != 0 && (item.Value & previousBits) != 0;
+                isPaused = currentBits != 0 && (item.Value & currentBits) != 0;
+
+                if (wasPaused && !isPaused)
+                    item.Key.Resume();
+                else if (!wasPaused && isPaused)
+                    item.Key.Pause();
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static ulong ToBits(T value) => Convert.ToUInt64(value);
+
+        private ulong _reasonBits = 0;
+        private readonly Dictionary<IPauseable, ulong> _pauseables = new();
     }
 }
