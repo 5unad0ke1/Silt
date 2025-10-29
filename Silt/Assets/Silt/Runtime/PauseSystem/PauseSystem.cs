@@ -4,119 +4,63 @@ using System.Runtime.CompilerServices;
 
 namespace Silt
 {
-    public sealed class PauseSystem<T> where T : struct, Enum
+    public sealed class PauseSystem<T> where T : unmanaged, Enum
     {
-        public PauseSystem()
-        {
-            _pausables = new();
-        }
         public bool IsPaused()
-        {
-            return _reasonBits != 0;
-        }
+            => _reasonBits != 0;
         public bool IsPaused(T filter)
+            => (_reasonBits & ToBits(filter)) != 0;
+        public void AddReason(T values)
         {
-            return (_reasonBits & ToBits(filter)) != 0;
-        }
-        public void AddReason(T value)
-        {
-            var result = _reasonBits | ToBits(value);
-            _reasonBits = result;
+            ulong previousBits = _reasonBits;
+            ulong currentBits = previousBits | ToBits(values);
+            _reasonBits = currentBits;
 
-            ForEachActiveReason(result, i =>
-            {
-                if (!_pausables.TryGetValue(i, out var hashSet))
-                    return;
-                foreach (var item in hashSet)
-                {
-                    item.Pause();
-                }
-            });
+            UpdatePauseState(_pauseables, previousBits, currentBits);
         }
-        public void RemoveReason(T value)
+        public void RemoveReason(T values)
         {
-            ulong valueBits = ToBits(value);
-            ulong result = _reasonBits & ~valueBits;
-            _reasonBits = result;
+            ulong previousBits = _reasonBits;
+            ulong currentBits = previousBits & ~ToBits(values);
+            _reasonBits = currentBits;
 
-            ForEachActiveReason(valueBits, i =>
-            {
-                if (!_pausables.TryGetValue(i, out var hashset))
-                    return;
-                foreach (var item in hashset)
-                {
-                    item.Resume();
-                }
-            });
+            UpdatePauseState(_pauseables, previousBits, currentBits);
         }
         public void Register(IPauseable pauseable, T filter)
         {
-            ulong result = ToBits(filter);
-
-            ForEachActiveReason(result, i =>
-            {
-                if (_pausables.TryGetValue(i, out var hashSet))
-                {
-                    hashSet.Add(pauseable);
-                }
-                else
-                {
-                    _pausables[i] = new(1) { pauseable };
-                }
-            });
+            _pauseables[pauseable] = ToBits(filter);
         }
-        public void Unregister(IPauseable pauseable, T filter)
+        public void Unregister(IPauseable pauseable)
         {
-            ulong r = ToBits(filter);
-            for (int i = 0; i < ULONG_SIZE; i++)
-            {
-                if (!IsTrueWithBit(r, i))
-                    return;
-                if (_pausables.TryGetValue(i, out var hashSet))
-                {
-                    hashSet.Remove(pauseable);
-                }
-                else
-                {
-                    throw new InvalidOperationException();
-                }
-            }
+            _pauseables.Remove(pauseable);
         }
-
         public void Clear()
         {
-            foreach (var item in _pausables)
-            {
-                item.Value?.Clear();
-            }
-            _pausables.Clear();
+            _pauseables.Clear();
+            _reasonBits = 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void ForEachActiveReason(ulong reasons, Action<int> action)
+        private static void UpdatePauseState(Dictionary<IPauseable, ulong> data, ulong previousBits, ulong currentBits)
         {
-            if(action is null)
-                throw new ArgumentNullException(nameof(action));
-            for (int i = 0; i < ULONG_SIZE; i++)
+            bool wasPaused;
+            bool isPaused;
+
+            foreach (var item in data)
             {
-                if (IsAllZeroBits(reasons, i))
-                    return;
-                if (!IsTrueWithBit(reasons, i))
-                    continue;
-                action(i);
+                wasPaused = previousBits != 0 && (item.Value & previousBits) != 0;
+                isPaused = currentBits != 0 && (item.Value & currentBits) != 0;
+
+                if (wasPaused && !isPaused)
+                    item.Key.Resume();
+                else if (!wasPaused && isPaused)
+                    item.Key.Pause();
             }
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsAllZeroBits(ulong data, int index)
-            => (data >> index) == 0;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsTrueWithBit(ulong data, int index)
-            => (data & (1ul << index)) != 0;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ulong ToBits(T value) => Convert.ToUInt64(value);
 
-        private const int ULONG_SIZE = sizeof(ulong) * 8;
         private ulong _reasonBits = 0;
-        private readonly Dictionary<int, HashSet<IPauseable>> _pausables;
+        private readonly Dictionary<IPauseable, ulong> _pauseables = new();
     }
 }
