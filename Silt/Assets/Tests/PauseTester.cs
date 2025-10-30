@@ -49,7 +49,7 @@ public class PauseTester : MonoBehaviour
         _system.Clear();
     }
     [Flags]
-    public enum AAA : int
+    public enum AAA : uint
     {
         None = 0,
         A = 1 << 0,
