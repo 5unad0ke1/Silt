@@ -1,1 +1,0 @@
-# TrafficLights a.k.a. PauseSystem
