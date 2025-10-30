@@ -6,6 +6,8 @@ namespace Silt
 {
     public sealed class PauseSystem<T> where T : unmanaged, Enum
     {
+        public T CurrentEnum => (T)Enum.ToObject(typeof(T), _reasonBits);
+        public ulong CurrentBits => _reasonBits;
         public bool IsPaused()
             => _reasonBits != 0;
         public bool IsPaused(T filter)
