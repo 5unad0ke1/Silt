@@ -1,33 +1,25 @@
 using Silt;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Tests : MonoBehaviour
+public sealed class Tests : MonoBehaviour
 {
     private SlotData<Slot> _data;
     void Start()
     {
         _data = SaveSystem<Common, Slot>.Slot;
     }
-
-    // Update is called once per frame
-    void Update()
+    public void Load()
     {
-        if (KeyCode.A.IsPress())
-        {
-            _data.Data.x++;
-            Debug.Log(_data.Data.x);
-        }
-        if (KeyCode.Space.IsPress())
-        {
-            _data.Save("a");
-        }
-        if (KeyCode.V.IsPress())
-        {
-            _data.Load("a");
-        }
+        _data.Load("a");
+    }
+    public void Save()
+    {
+        _data.Save("a");
+    }
+    public void Incre()
+    {
+        _data.Data.x++;
+        Debug.Log(_data.Data.x);
     }
 }
 [System.Serializable]
