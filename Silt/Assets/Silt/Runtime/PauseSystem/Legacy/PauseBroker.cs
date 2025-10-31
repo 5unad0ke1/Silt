@@ -2,13 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Silt.Legacy
+namespace Silt.Systems
 {
-    public sealed class PauseSystem<T> where T : struct, Enum
+    public sealed class PauseBroker<T> where T : unmanaged, Enum
     {
-        public PauseSystem()
+        public PauseBroker()
         {
-            _pausables = new();
+            string message = "PauseBroker only supports enums with an underlying type of byte.";
+            int enumSize = PauseUtility.GetEnumSize<T>();
+            if (enumSize > sizeof(byte))
+            {
+                throw new InvalidOperationException($"{message}\nActual size of generic type '{typeof(T).Name}' is {enumSize} bytes.");
+            }
         }
         public bool IsPaused()
         {
@@ -16,11 +21,11 @@ namespace Silt.Legacy
         }
         public bool IsPaused(T filter)
         {
-            return (_reasonBits & ToBits(filter)) != 0;
+            return (_reasonBits & PauseUtility.ToBits(filter)) != 0;
         }
         public void AddReason(T value)
         {
-            var result = _reasonBits | ToBits(value);
+            var result = (byte)(_reasonBits | PauseUtility.ToBits(value));
             _reasonBits = result;
 
             ForEachActiveReason(result, i =>
@@ -35,8 +40,8 @@ namespace Silt.Legacy
         }
         public void RemoveReason(T value)
         {
-            ulong valueBits = ToBits(value);
-            ulong result = _reasonBits & ~valueBits;
+            byte valueBits = PauseUtility.ToBits(value);
+            byte result = (byte)(_reasonBits & ~valueBits);
             _reasonBits = result;
 
             ForEachActiveReason(valueBits, i =>
@@ -51,7 +56,7 @@ namespace Silt.Legacy
         }
         public void Register(IPauseable pauseable, T filter)
         {
-            ulong result = ToBits(filter);
+            byte result = PauseUtility.ToBits(filter);
 
             ForEachActiveReason(result, i =>
             {
@@ -67,8 +72,8 @@ namespace Silt.Legacy
         }
         public void Unregister(IPauseable pauseable, T filter)
         {
-            ulong r = ToBits(filter);
-            for (int i = 0; i < ULONG_SIZE; i++)
+            byte r = PauseUtility.ToBits(filter);
+            for (int i = 0; i < BYTE_SIZE; i++)
             {
                 if (!IsTrueWithBit(r, i))
                     return;
@@ -93,11 +98,11 @@ namespace Silt.Legacy
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void ForEachActiveReason(ulong reasons, Action<int> action)
+        private static void ForEachActiveReason(byte reasons, Action<int> action)
         {
             if(action is null)
                 throw new ArgumentNullException(nameof(action));
-            for (int i = 0; i < ULONG_SIZE; i++)
+            for (int i = 0; i < BYTE_SIZE; i++)
             {
                 if (IsAllZeroBits(reasons, i))
                     return;
@@ -107,16 +112,14 @@ namespace Silt.Legacy
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsAllZeroBits(ulong data, int index)
+        private static bool IsAllZeroBits(byte data, int index)
             => (data >> index) == 0;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsTrueWithBit(ulong data, int index)
-            => (data & (1ul << index)) != 0;
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ulong ToBits(T value) => Convert.ToUInt64(value);
+        private static bool IsTrueWithBit(byte data, int index)
+            => (data & (1 << index)) != 0;
 
-        private const int ULONG_SIZE = sizeof(ulong) * 8;
-        private ulong _reasonBits = 0;
-        private readonly Dictionary<int, HashSet<IPauseable>> _pausables;
+        private const int BYTE_SIZE = sizeof(byte) * 8;
+        private byte _reasonBits = 0;
+        private readonly Dictionary<int, HashSet<IPauseable>> _pausables = new();
     }
 }
