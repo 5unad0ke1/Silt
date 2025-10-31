@@ -16,5 +16,5 @@ https://github.com/5unad0ke1/Silt.git?path=/Silt/Assets/Silt
 ### Development Version
 
 ```
-https://github.com/5unad0ke1/Silt.git?path=/Silt/Assets/Silt&branch=develop
+https://github.com/5unad0ke1/Silt.git?path=/Silt/Assets/Silt#develop
 ```
