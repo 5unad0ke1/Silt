@@ -287,8 +287,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75603e6db8e9d804f9bff018275bdf54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bools: 0000000000
-  mode: ffffffff0f0000000e0000008c01000000800000
+  bools: 0101010000
+  mode: ff03020000
 --- !u!4 &641950078
 Transform:
   m_ObjectHideFlags: 0

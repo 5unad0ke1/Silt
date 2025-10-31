@@ -1,17 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
-namespace Silt
+namespace Silt.Systems
 {
-    public sealed class PauseSystem<T> where T : unmanaged, Enum
+    public sealed class PauseLight<T> where T : unmanaged, Enum
     {
-        public PauseSystem()
+        public PauseLight()
         {
-            string message = "PauseSystem only supports enums with an underlying type of byte.";
+            string message = "PauseLight only supports enums with an underlying type of byte.";
 
-            int enumSize = GetEnumSize();
+            int enumSize = PauseUtility.GetEnumSize<T>();
             if (enumSize > sizeof(byte))
             {
                 throw new InvalidOperationException($"{message}\nActual size of generic type '{typeof(T).Name}' is {enumSize} bytes.");
@@ -23,11 +22,11 @@ namespace Silt
         public bool IsPaused()
             => _reasonBits != 0;
         public bool IsPaused(T filter)
-            => (_reasonBits & ToBits(filter)) != 0;
+            => (_reasonBits & PauseUtility.ToBits(filter)) != 0;
         public void AddReason(T values)
         {
             byte previousBits = _reasonBits;
-            byte currentBits = (byte)(previousBits | ToBits(values));
+            byte currentBits = (byte)(previousBits | PauseUtility.ToBits(values));
             _reasonBits = currentBits;
 
             UpdatePauseState(_pauseables, previousBits, currentBits);
@@ -35,14 +34,14 @@ namespace Silt
         public void RemoveReason(T values)
         {
             byte previousBits = _reasonBits;
-            byte currentBits = (byte)(previousBits & ~ToBits(values));
+            byte currentBits = (byte)(previousBits & ~PauseUtility.ToBits(values));
             _reasonBits = currentBits;
 
             UpdatePauseState(_pauseables, previousBits, currentBits);
         }
         public void Register(IPauseable pauseable, T filter)
         {
-            _pauseables[pauseable] = ToBits(filter);
+            _pauseables[pauseable] = PauseUtility.ToBits(filter);
         }
         public void Unregister(IPauseable pauseable)
         {
@@ -72,14 +71,6 @@ namespace Silt
                 else if (!wasPaused && isPaused)
                     item.Key.Pause();
             }
-        }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static byte ToBits(T value) => Convert.ToByte(value);
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int GetEnumSize()
-        {
-            Type underlying = Enum.GetUnderlyingType(typeof(T));
-            return Marshal.SizeOf(underlying);
         }
 
         private byte _reasonBits = 0;

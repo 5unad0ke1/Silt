@@ -1,4 +1,5 @@
 using Silt;
+using Silt.Systems;
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -8,7 +9,7 @@ public class PauseTester : MonoBehaviour
     [SerializeField] private bool[] bools;
     [SerializeField] private AAA[] mode;
 
-    private PauseSystem<AAA> _system; 
+    private PauseLight<AAA> _system; 
 
     public int Length => bools.Length;
 
@@ -44,7 +45,7 @@ public class PauseTester : MonoBehaviour
         _system.Clear();
     }
     [Flags]
-    public enum AAA : int
+    public enum AAA : byte
     {
         None = 0,
         A = 1 << 0,
