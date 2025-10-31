@@ -1,29 +1,41 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Silt
 {
     public sealed class PauseSystem<T> where T : unmanaged, Enum
     {
+        public PauseSystem()
+        {
+            string message = "PauseSystem only supports enums with an underlying type of byte.";
+
+            int enumSize = GetEnumSize();
+            if (enumSize > sizeof(byte))
+            {
+                throw new InvalidOperationException($"{message}\nActual size of generic type '{typeof(T).Name}' is {enumSize} bytes.");
+            }
+        }
+
         public T CurrentEnum => (T)Enum.ToObject(typeof(T), _reasonBits);
-        public ulong CurrentBits => _reasonBits;
+        public uint CurrentBits => _reasonBits;
         public bool IsPaused()
             => _reasonBits != 0;
         public bool IsPaused(T filter)
             => (_reasonBits & ToBits(filter)) != 0;
         public void AddReason(T values)
         {
-            ulong previousBits = _reasonBits;
-            ulong currentBits = previousBits | ToBits(values);
+            byte previousBits = _reasonBits;
+            byte currentBits = (byte)(previousBits | ToBits(values));
             _reasonBits = currentBits;
 
             UpdatePauseState(_pauseables, previousBits, currentBits);
         }
         public void RemoveReason(T values)
         {
-            ulong previousBits = _reasonBits;
-            ulong currentBits = previousBits & ~ToBits(values);
+            byte previousBits = _reasonBits;
+            byte currentBits = (byte)(previousBits & ~ToBits(values));
             _reasonBits = currentBits;
 
             UpdatePauseState(_pauseables, previousBits, currentBits);
@@ -41,9 +53,11 @@ namespace Silt
             _pauseables.Clear();
             _reasonBits = 0;
         }
+        public override string ToString()
+             => $"{typeof(T).Name}: {_reasonBits:X2} ({CurrentEnum})";
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void UpdatePauseState(Dictionary<IPauseable, ulong> data, in ulong previousBits, in ulong currentBits)
+        private static void UpdatePauseState(Dictionary<IPauseable, byte> data, in byte previousBits, in byte currentBits)
         {
             bool wasPaused;
             bool isPaused;
@@ -60,9 +74,15 @@ namespace Silt
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ulong ToBits(T value) => Convert.ToUInt64(value);
+        private static byte ToBits(T value) => Convert.ToByte(value);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int GetEnumSize()
+        {
+            Type underlying = Enum.GetUnderlyingType(typeof(T));
+            return Marshal.SizeOf(underlying);
+        }
 
-        private ulong _reasonBits = 0;
-        private readonly Dictionary<IPauseable, ulong> _pauseables = new();
+        private byte _reasonBits = 0;
+        private readonly Dictionary<IPauseable, byte> _pauseables = new();
     }
 }
