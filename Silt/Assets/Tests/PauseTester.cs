@@ -24,10 +24,6 @@ public class PauseTester : MonoBehaviour
     void Start()
     {
         _system = new();
-        for (int i = 0; i < mode.Length; i++)
-        {
-            mode[i] |= (AAA)(1 << Random.Range(0, 14));
-        }
         for (int i = 0; i < bools.Length; i++)
         {
             Unit unit = new();
@@ -42,14 +38,13 @@ public class PauseTester : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
     private void OnDestroy()
     {
         _system.Clear();
     }
     [Flags]
-    public enum AAA : uint
+    public enum AAA : int
     {
         None = 0,
         A = 1 << 0,
@@ -60,14 +55,6 @@ public class PauseTester : MonoBehaviour
         F = 1 << 5,
         G = 1 << 6,
         H = 1 << 7,
-        I = 1 << 8,
-        J = 1 << 9,
-        K = 1 << 10,
-        L = 1 << 11,
-        M = 1 << 12,
-        N = 1 << 13,
-        O = 1 << 14,
-        P = 1 << 15,
     }
     private class Unit : IPauseable
     {
