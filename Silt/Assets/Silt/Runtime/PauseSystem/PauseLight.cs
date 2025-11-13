@@ -72,10 +72,9 @@ namespace Silt.Systems
         {
             if (_isDisposed)
                 return;
-
-            Clear();
-            _pauseables.Free();
             _isDisposed = true;
+
+            _pauseables.Free();
         }
         public override string ToString()
              => $"{typeof(T).Name}: {_reasonBits:X2} ({CurrentEnum})";
