@@ -5,7 +5,11 @@ namespace Silt
 {
     public sealed class Locator : IDisposable
     {
-        public Locator() { }
+        public Locator()
+        {
+            _locators = DictionaryPool<Type, object>.Get();
+            _disposables = ListPool<IDisposable>.Get();
+        }
 
         public void Register<T>(T obj) where T : class
         {
@@ -39,14 +43,26 @@ namespace Silt
         }
         public void Dispose()
         {
-            for (int i = 0; i < _disposables.Count; i++)
+            if (_disposables is not null)
             {
-                _disposables[^(i + 1)]?.Dispose();
+                for (int i = 0; i < _disposables.Count; i++)
+                {
+                    _disposables[^(i + 1)]?.Dispose();
+                }
+
+                _disposables.Free();
+                _disposables = null;
             }
-            _locators.Clear();
+
+            if (_locators is not null)
+            {
+                _locators.Free();
+                _locators = null;
+            }
+
         }
 
-        private readonly Dictionary<Type, object> _locators = new();
-        private readonly List<IDisposable> _disposables = new();
+        private Dictionary<Type, object> _locators;
+        private List<IDisposable> _disposables;
     }
 }
