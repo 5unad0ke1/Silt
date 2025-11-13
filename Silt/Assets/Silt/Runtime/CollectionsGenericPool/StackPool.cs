@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace sil
+namespace Silt
 {
     public static class StackPool<T>
     {
