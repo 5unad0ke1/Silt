@@ -147,6 +147,6 @@ namespace Silt.Systems
         private bool _isDisposed = false;
         private const int BYTE_SIZE = sizeof(byte) * 8;
         private byte _reasonBits = 0;
-        private Dictionary<int, HashSet<IPauseable>> _pausables = new();
+        private Dictionary<int, HashSet<IPauseable>> _pausables;
     }
 }
