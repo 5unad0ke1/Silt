@@ -24,6 +24,10 @@ namespace Silt
 
         public static void Free(HashSet<T> hashSet)
         {
+            if (hashSet is null)
+            {
+                throw new ArgumentNullException(nameof(hashSet));
+            }
             lock (_lock)
             {
                 if (!_busy.Contains(hashSet))

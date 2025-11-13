@@ -24,6 +24,10 @@ namespace Silt
 
         public static void Free(List<T> list)
         {
+            if (list is null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
             lock (_lock)
             {
                 if (!_busy.Contains(list))

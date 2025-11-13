@@ -24,6 +24,10 @@ namespace Silt
 
         public static void Free(Stack<T> stack)
         {
+            if (stack is null)
+            {
+                throw new ArgumentNullException(nameof(stack));
+            }
             lock (_lock)
             {
                 if (!_busy.Contains(stack))

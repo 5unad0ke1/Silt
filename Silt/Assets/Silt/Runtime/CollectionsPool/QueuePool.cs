@@ -24,6 +24,10 @@ namespace Silt
 
         public static void Free(Queue<T> queue)
         {
+            if (queue is null)
+            {
+                throw new ArgumentNullException(nameof(queue));
+            }
             lock (_lock)
             {
                 if (!_busy.Contains(queue))
