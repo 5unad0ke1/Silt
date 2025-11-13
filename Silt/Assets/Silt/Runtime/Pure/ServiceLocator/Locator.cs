@@ -13,6 +13,9 @@ namespace Silt
 
         public void Register<T>(T obj) where T : class
         {
+            if (_isDisposed)
+                return;
+
             if (_locators.ContainsKey(typeof(T)))
             {
                 throw new InvalidOperationException($"A service of type {typeof(T).Name} is already registered.");
@@ -26,6 +29,9 @@ namespace Silt
         }
         public T Get<T>() where T : class
         {
+            if (_isDisposed)
+                throw new ObjectDisposedException(nameof(Locator));
+
             if (!_locators.TryGetValue(typeof(T), out var obj))
             {
                 throw new InvalidOperationException($"No service of type {typeof(T).Name} is registered.");
@@ -39,6 +45,9 @@ namespace Silt
 
         public void Clear()
         {
+            if (_isDisposed)
+                return;
+
             _locators.Clear();
 
             for (int i = 0; i < _disposables.Count; i++)
@@ -49,6 +58,11 @@ namespace Silt
         }
         public void Dispose()
         {
+            if (_isDisposed)
+                return;
+
+            _isDisposed = true;
+
             if (_disposables is not null)
             {
                 for (int i = 0; i < _disposables.Count; i++)
@@ -65,9 +79,9 @@ namespace Silt
                 _locators.Free();
                 _locators = null;
             }
-
         }
 
+        private bool _isDisposed = false;
         private Dictionary<Type, object> _locators;
         private List<IDisposable> _disposables;
     }
