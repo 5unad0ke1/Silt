@@ -43,15 +43,22 @@ namespace Silt
         }
         public void Dispose()
         {
-            for (int i = 0; i < _disposables.Count; i++)
+            if (_disposables is not null)
             {
-                _disposables[^(i + 1)]?.Dispose();
-            }
-            _disposables.Clear();
-            _disposables.Free();
-            _disposables = null;
+                for (int i = 0; i < _disposables.Count; i++)
+                {
+                    _disposables[^(i + 1)]?.Dispose();
+                }
 
-            _locators.Clear();
+                _disposables.Free();
+                _disposables = null;
+            }
+
+            if (_locators is not null)
+            {
+                _locators.Free();
+                _locators = null;
+            }
 
         }
 
