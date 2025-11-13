@@ -117,10 +117,10 @@ namespace Silt.Systems
         {
             if (_isDisposed)
                 return;
-            _isDisposed = true;
 
             Clear();
             _pausables.Free();
+            _isDisposed = true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
