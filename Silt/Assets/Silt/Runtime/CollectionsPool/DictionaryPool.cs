@@ -23,6 +23,11 @@ namespace Silt
         }
         public static void Free(Dictionary<TKey, TValue> dictionary)
         {
+            if (dictionary is null)
+            {
+                throw new ArgumentNullException(nameof(dictionary));
+            }
+
             lock (_lock)
             {
                 if (!_busy.Contains(dictionary))
