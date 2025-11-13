@@ -77,7 +77,9 @@ namespace Silt.Systems
                 }
                 else
                 {
-                    _pausables[i] = new(1) { pauseable };
+                    hashSet = HashSetPool<IPauseable>.Get();
+                    hashSet.Add(pauseable);
+                    _pausables[i] = hashSet;
                 }
             });
         }
@@ -99,7 +101,7 @@ namespace Silt.Systems
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException($"Pauseable not found in filter bit {i}. Ensure Register was called before Unregister.");
                 }
             }
         }
@@ -111,7 +113,7 @@ namespace Silt.Systems
 
             foreach (var item in _pausables)
             {
-                item.Value?.Clear();
+                item.Value?.Free();
             }
             _pausables.Clear();
         }
