@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Silt.Systems
 {
-    public sealed class PauseBroker<T> where T : unmanaged, Enum
+    public sealed class PauseBroker<T> : IDisposable where T : unmanaged, Enum
     {
         public PauseBroker()
         {
@@ -14,6 +14,8 @@ namespace Silt.Systems
             {
                 throw new InvalidOperationException($"{message}\nActual size of generic type '{typeof(T).Name}' is {enumSize} bytes.");
             }
+
+            _pausables = DictionaryPool<int, HashSet<IPauseable>>.Get();
         }
         public bool IsPaused()
         {
@@ -25,6 +27,9 @@ namespace Silt.Systems
         }
         public void AddReason(T value)
         {
+            if (_isDisposed)
+                return;
+
             var result = (byte)(_reasonBits | PauseUtility.ToBits(value));
             _reasonBits = result;
 
@@ -40,6 +45,9 @@ namespace Silt.Systems
         }
         public void RemoveReason(T value)
         {
+            if (_isDisposed)
+                return;
+
             byte valueBits = PauseUtility.ToBits(value);
             byte result = (byte)(_reasonBits & ~valueBits);
             _reasonBits = result;
@@ -56,6 +64,9 @@ namespace Silt.Systems
         }
         public void Register(IPauseable pauseable, T filter)
         {
+            if (_isDisposed)
+                return;
+
             byte result = PauseUtility.ToBits(filter);
 
             ForEachActiveReason(result, i =>
@@ -72,6 +83,9 @@ namespace Silt.Systems
         }
         public void Unregister(IPauseable pauseable, T filter)
         {
+            if (_isDisposed)
+                return;
+
             byte r = PauseUtility.ToBits(filter);
             for (int i = 0; i < BYTE_SIZE; i++)
             {
@@ -90,17 +104,29 @@ namespace Silt.Systems
 
         public void Clear()
         {
+            if (_isDisposed)
+                return;
+
             foreach (var item in _pausables)
             {
                 item.Value?.Clear();
             }
             _pausables.Clear();
         }
+        public void Dispose()
+        {
+            if (_isDisposed)
+                return;
+            _isDisposed = true;
+
+            Clear();
+            _pausables.Free();
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ForEachActiveReason(byte reasons, Action<int> action)
         {
-            if(action is null)
+            if (action is null)
                 throw new ArgumentNullException(nameof(action));
             for (int i = 0; i < BYTE_SIZE; i++)
             {
@@ -118,8 +144,9 @@ namespace Silt.Systems
         private static bool IsTrueWithBit(byte data, int index)
             => (data & (1 << index)) != 0;
 
+        private bool _isDisposed = false;
         private const int BYTE_SIZE = sizeof(byte) * 8;
         private byte _reasonBits = 0;
-        private readonly Dictionary<int, HashSet<IPauseable>> _pausables = new();
+        private Dictionary<int, HashSet<IPauseable>> _pausables = new();
     }
 }

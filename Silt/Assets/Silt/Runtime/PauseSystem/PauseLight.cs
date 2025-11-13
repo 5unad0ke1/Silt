@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Silt.Systems
 {
-    public sealed class PauseLight<T> where T : unmanaged, Enum
+    public sealed class PauseLight<T> : IDisposable where T : unmanaged, Enum
     {
         public PauseLight()
         {
@@ -15,6 +15,7 @@ namespace Silt.Systems
             {
                 throw new InvalidOperationException($"{message}\nActual size of generic type '{typeof(T).Name}' is {enumSize} bytes.");
             }
+            _pauseables = DictionaryPool<IPauseable, byte>.Get();
         }
 
         public T CurrentEnum => (T)Enum.ToObject(typeof(T), _reasonBits);
@@ -25,6 +26,9 @@ namespace Silt.Systems
             => (_reasonBits & PauseUtility.ToBits(filter)) != 0;
         public void AddReason(T values)
         {
+            if (_isDisposed)
+                return;
+
             byte previousBits = _reasonBits;
             byte currentBits = (byte)(previousBits | PauseUtility.ToBits(values));
             _reasonBits = currentBits;
@@ -33,6 +37,9 @@ namespace Silt.Systems
         }
         public void RemoveReason(T values)
         {
+            if (_isDisposed)
+                return;
+
             byte previousBits = _reasonBits;
             byte currentBits = (byte)(previousBits & ~PauseUtility.ToBits(values));
             _reasonBits = currentBits;
@@ -41,16 +48,34 @@ namespace Silt.Systems
         }
         public void Register(IPauseable pauseable, T filter)
         {
+            if (_isDisposed)
+                return;
+
             _pauseables[pauseable] = PauseUtility.ToBits(filter);
         }
         public void Unregister(IPauseable pauseable)
         {
+            if (_isDisposed)
+                return;
+
             _pauseables.Remove(pauseable);
         }
         public void Clear()
         {
+            if (_isDisposed)
+                return;
+
             _pauseables.Clear();
             _reasonBits = 0;
+        }
+        public void Dispose()
+        {
+            if (_isDisposed)
+                return;
+            _isDisposed = true;
+
+            Clear();
+            _pauseables.Free();
         }
         public override string ToString()
              => $"{typeof(T).Name}: {_reasonBits:X2} ({CurrentEnum})";
@@ -73,7 +98,8 @@ namespace Silt.Systems
             }
         }
 
+        private bool _isDisposed = false;
         private byte _reasonBits = 0;
-        private readonly Dictionary<IPauseable, byte> _pauseables = new();
+        private Dictionary<IPauseable, byte> _pauseables;
     }
 }
