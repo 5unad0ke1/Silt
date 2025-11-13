@@ -113,18 +113,22 @@ namespace Silt.Systems
 
             foreach (var item in _pausables)
             {
-                item.Value?.Free();
+                item.Value?.Clear();
             }
             _pausables.Clear();
+            _reasonBits = 0;
         }
         public void Dispose()
         {
             if (_isDisposed)
                 return;
-
-            Clear();
-            _pausables.Free();
             _isDisposed = true;
+
+            foreach (var item in _pausables)
+            {
+                item.Value?.Free();
+            }
+            _pausables.Free();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
