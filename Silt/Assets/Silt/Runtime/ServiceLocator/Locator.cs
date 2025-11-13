@@ -39,7 +39,13 @@ namespace Silt
 
         public void Clear()
         {
-            Dispose();
+            _locators.Clear();
+
+            for (int i = 0; i < _disposables.Count; i++)
+            {
+                _disposables[^(i + 1)]?.Dispose();
+            }
+            _disposables.Clear();
         }
         public void Dispose()
         {
