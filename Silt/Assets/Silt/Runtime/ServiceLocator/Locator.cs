@@ -11,7 +11,7 @@ namespace Silt
         {
             if (_locators.ContainsKey(typeof(T)))
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"A service of type {typeof(T).Name} is already registered.");
             }
 
             if (obj is IDisposable disposable)
@@ -24,19 +24,18 @@ namespace Silt
         {
             if (!_locators.TryGetValue(typeof(T), out var obj))
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"No service of type {typeof(T).Name} is registered.");
             }
             if (obj is not T result)
             {
-                throw new Exception();
+                throw new InvalidCastException($"Registered service of type {obj.GetType().Name} cannot be cast to {typeof(T).Name}.");
             }
             return result;
         }
 
         public void Clear()
         {
-            _locators.Clear();
-            _disposables.Clear();
+            Dispose();
         }
         public void Dispose()
         {
@@ -44,7 +43,7 @@ namespace Silt
             {
                 _disposables[^(i + 1)]?.Dispose();
             }
-            Clear();
+            _locators.Clear();
         }
 
         private readonly Dictionary<Type, object> _locators = new();
