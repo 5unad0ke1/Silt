@@ -89,8 +89,10 @@ namespace Silt.Systems
             byte r = PauseUtility.ToBits(filter);
             for (int i = 0; i < BYTE_SIZE; i++)
             {
-                if (!IsTrueWithBit(r, i))
+                if (IsAllZeroBits(r, i))
                     return;
+                if (!IsTrueWithBit(r, i))
+                    continue;
                 if (_pausables.TryGetValue(i, out var hashSet))
                 {
                     hashSet.Remove(pauseable);
