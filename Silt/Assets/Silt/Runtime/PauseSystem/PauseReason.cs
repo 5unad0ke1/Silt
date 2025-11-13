@@ -3,10 +3,10 @@ using System;
 namespace Silt
 {
     [Flags]
-    public enum PauseReason : uint
+    public enum PauseReason : byte
     {
         None = 0,
-        All = uint.MaxValue,
+        All = byte.MaxValue,
         UserPaused = 1 << 0,
         SystemMaintenance = 1 << 1,
         NetworkIssues = 1 << 2,
