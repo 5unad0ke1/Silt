@@ -3,12 +3,13 @@ using System.Collections.Generic;
 
 namespace Silt
 {
-    public class ObjectPool<T> : IDisposable where T : class
+    public sealed class ObjectPool<T> : IDisposable where T : class
     {
         public ObjectPool(Func<T> func)
         {
             _generator = func ?? throw new ArgumentNullException(nameof(func));
 
+            _lock = new();
             _free = QueuePool<T>.Get();
             _busy = HashSetPool<T>.Get();
         }
@@ -61,8 +62,8 @@ namespace Silt
             _busy = null;
         }
 
-        private readonly object _lock = new();
         private bool _isDisposed = false;
+        private readonly object _lock;
         private readonly Func<T> _generator;
         private Queue<T> _free;
         private HashSet<T> _busy;
