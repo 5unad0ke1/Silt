@@ -22,7 +22,7 @@ namespace Silt
 
                 if (_free.Count == 0)
                 {
-                    _free.Enqueue(_generator.Invoke());
+                    _free.Enqueue(_generator());
                 }
 
                 var item = _free.Dequeue();
