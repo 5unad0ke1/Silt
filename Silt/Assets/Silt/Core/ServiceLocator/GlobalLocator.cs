@@ -3,7 +3,6 @@ namespace Silt
     public static class GlobalLocator
     {
         static GlobalLocator() { }
-
         public static void Register<T>(T obj) where T : class
         {
             _locator.Register(obj);
@@ -12,12 +11,10 @@ namespace Silt
         {
             return _locator.Get<T>();
         }
-
         public static void Clear()
         {
             _locator.Clear();
         }
-
         private static readonly Locator _locator = new();
     }
 }

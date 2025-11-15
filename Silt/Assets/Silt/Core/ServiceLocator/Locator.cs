@@ -10,7 +10,6 @@ namespace Silt
             _locators = DictionaryPool<Type, object>.Get();
             _disposables = ListPool<IDisposable>.Get();
         }
-
         public void Register<T>(T obj) where T : class
         {
             if (_isDisposed)
@@ -42,7 +41,6 @@ namespace Silt
             }
             return result;
         }
-
         public void Clear()
         {
             if (_isDisposed)
@@ -80,7 +78,6 @@ namespace Silt
                 _locators = null;
             }
         }
-
         private bool _isDisposed = false;
         private Dictionary<Type, object> _locators;
         private List<IDisposable> _disposables;
