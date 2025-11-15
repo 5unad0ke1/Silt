@@ -7,6 +7,8 @@ namespace Silt
     {
         public ProfilerScope(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("ProfilerScope name cannot be null or whitespace.", nameof(name));
             Profiler.BeginSample(name);
         }
         void IDisposable.Dispose()
