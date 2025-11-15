@@ -32,7 +32,7 @@ namespace Silt
             {
                 if (!_busy.Contains(dictionary))
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException("Dictionary not in busy set.", nameof(dictionary));
                 }
 
                 dictionary.Clear();
