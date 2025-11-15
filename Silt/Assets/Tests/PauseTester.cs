@@ -1,15 +1,13 @@
-using Silt;
-using Silt.Systems;
+using Silt.Core;
 using System;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class PauseTester : MonoBehaviour
 {
     [SerializeField] private bool[] bools;
     [SerializeField] private AAA[] mode;
 
-    private PauseLight<AAA> _system; 
+    private PauseLight<AAA> _system;
 
     public int Length => bools.Length;
 
@@ -30,7 +28,7 @@ public class PauseTester : MonoBehaviour
             Unit unit = new();
             int j = i;
             unit.OnPause += () => bools[j] = false;
-            unit.OnResue += () => bools[j] = true;
+            unit.OnResume += () => bools[j] = true;
 
             _system.Register(unit, mode[Mathf.Min(i, mode.Length - 1)]);
         }
@@ -60,14 +58,14 @@ public class PauseTester : MonoBehaviour
     private class Unit : IPauseable
     {
         public Action OnPause;
-        public Action OnResue;
+        public Action OnResume;
         public void Pause()
         {
             OnPause?.Invoke();
         }
-        public void Resume() 
+        public void Resume()
         {
-            OnResue?.Invoke();
+            OnResume?.Invoke();
         }
     }
 }

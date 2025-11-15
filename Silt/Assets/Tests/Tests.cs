@@ -1,4 +1,5 @@
 using Silt;
+using Silt.Runtime;
 using UnityEngine;
 
 public sealed class Tests : MonoBehaviour
@@ -46,26 +47,26 @@ public class Common : ICreatedAt, IUpdateAt, IChecksum
     }
 }
 [System.Serializable]
-public class Slot : ICreatedAt,IUpdateAt,IChecksum
+public class Slot : ICreatedAt, IUpdateAt, IChecksum
 {
     public long createdTime;
     public long updatedTime;
     public int hash;
 
-    public int x; 
+    public int x;
     public int y;
 
     long ICreatedAt.CreatedAtUnix
     {
         get => createdTime;
-        set => createdTime = value; 
+        set => createdTime = value;
     }
-    long IUpdateAt.UpdatedAtUnix 
+    long IUpdateAt.UpdatedAtUnix
     {
-        get => updatedTime; 
-        set => updatedTime = value; 
+        get => updatedTime;
+        set => updatedTime = value;
     }
-    int IChecksum.HashNum 
+    int IChecksum.HashNum
     {
         get => hash;
         set => hash = value;

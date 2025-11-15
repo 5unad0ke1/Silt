@@ -1,8 +1,8 @@
-namespace Silt
+namespace Silt.Runtime
 {
     public static class SaveSystem<CommonData, SlotData> where CommonData : class, new() where SlotData : class, new()
     {
-        static SaveSystem() 
+        static SaveSystem()
         {
             Common = new();
             Slot = new();

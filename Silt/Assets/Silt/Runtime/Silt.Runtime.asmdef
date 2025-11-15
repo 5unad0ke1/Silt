@@ -1,13 +1,10 @@
 {
-    "name": "Silt.Editor",
+    "name": "Silt.Runtime",
     "rootNamespace": "",
     "references": [
-        "Silt.Core",
-        "Silt.Runtime"
+        "GUID:987bbff5830eae44fa388418b61b0ae3"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
