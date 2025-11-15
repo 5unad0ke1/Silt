@@ -1,4 +1,4 @@
-namespace Silt
+namespace Silt.Core
 {
     public static class GlobalLocator
     {

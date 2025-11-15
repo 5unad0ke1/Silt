@@ -2,7 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Silt.Pause
+namespace Silt.Core
 {
     internal static class PauseUtility
     {

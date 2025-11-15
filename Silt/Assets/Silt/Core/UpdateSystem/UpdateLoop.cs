@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Silt.Update
+namespace Silt.Core
 {
     public class UpdateLoop
     {

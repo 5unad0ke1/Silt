@@ -1,4 +1,4 @@
-namespace Silt.Update
+namespace Silt.Core
 {
     public interface IUpdatable
     {

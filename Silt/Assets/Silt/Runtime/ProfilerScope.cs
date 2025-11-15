@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.Profiling;
 
-namespace Silt
+namespace Silt.Runtime
 {
     public readonly struct ProfilerScope : IDisposable
     {

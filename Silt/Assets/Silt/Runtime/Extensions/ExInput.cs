@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Silt
+namespace Silt.Runtime
 {
     public static class ExInput
     {

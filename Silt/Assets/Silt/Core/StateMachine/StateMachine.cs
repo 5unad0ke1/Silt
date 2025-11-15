@@ -1,4 +1,4 @@
-﻿namespace Silt
+﻿namespace Silt.Core
 {
     public sealed class StateMachine
     {

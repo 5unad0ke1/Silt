@@ -1,4 +1,4 @@
-namespace Silt
+namespace Silt.Runtime
 {
     public class SlotData<T> where T : class, new()
     {

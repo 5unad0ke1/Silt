@@ -1,6 +1,7 @@
+using Silt.Core;
 using UnityEngine;
 
-namespace Silt.Update
+namespace Silt.Runtime
 {
     public static class UpdateSystem
     {

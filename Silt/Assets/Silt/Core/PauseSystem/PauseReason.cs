@@ -1,6 +1,6 @@
 using System;
 
-namespace Silt.Pause
+namespace Silt.Core
 {
     [Flags]
     public enum PauseReason : byte

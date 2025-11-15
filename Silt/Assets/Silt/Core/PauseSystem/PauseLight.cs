@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Silt.Pause
+namespace Silt.Core
 {
     public sealed class PauseLight<T> : IDisposable where T : unmanaged, Enum
     {
