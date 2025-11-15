@@ -1,8 +1,7 @@
-using Silt.Systems;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Silt
+namespace Silt.Pause
 {
     internal static class PauseManager
     {

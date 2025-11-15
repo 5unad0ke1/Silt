@@ -1,6 +1,4 @@
-using System;
-
-namespace Silt
+namespace Silt.Pause
 {
     public interface IPauseable
     {

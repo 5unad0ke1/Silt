@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Silt.Systems
+namespace Silt.Pause
 {
     public sealed class PauseBroker<T> : IDisposable where T : unmanaged, Enum
     {
