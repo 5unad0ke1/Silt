@@ -11,10 +11,10 @@ namespace Silt
             {
                 if (_free.Count == 0)
                 {
-                    _free.Push(new());
+                    _free.Enqueue(new());
                 }
 
-                var dictionary = _free.Pop();
+                var dictionary = _free.Dequeue();
 
                 _busy.Add(dictionary);
 
@@ -39,19 +39,12 @@ namespace Silt
 
                 _busy.Remove(dictionary);
 
-                _free.Push(dictionary);
+                _free.Enqueue(dictionary);
             }
         }
 
         private static readonly object _lock = new();
-        private static readonly Stack<Dictionary<TKey, TValue>> _free = new();
+        private static readonly Queue<Dictionary<TKey, TValue>> _free = new();
         private static readonly HashSet<Dictionary<TKey, TValue>> _busy = new();
-    }
-    public static class ExDictionaryPool
-    {
-        public static void Free<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
-        {
-            DictionaryPool<TKey, TValue>.Free(dictionary);
-        }
     }
 }

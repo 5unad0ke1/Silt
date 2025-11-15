@@ -46,12 +46,4 @@ namespace Silt
         private static readonly Queue<HashSet<T>> _free = new();
         private static readonly HashSet<HashSet<T>> _busy = new();
     }
-
-    public static class ExHashSetPool
-    {
-        public static void Free<T>(this HashSet<T> hashSet)
-        {
-            HashSetPool<T>.Free(hashSet);
-        }
-    }
 }
