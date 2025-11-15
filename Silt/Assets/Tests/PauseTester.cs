@@ -28,7 +28,7 @@ public class PauseTester : MonoBehaviour
             Unit unit = new();
             int j = i;
             unit.OnPause += () => bools[j] = false;
-            unit.OnResue += () => bools[j] = true;
+            unit.OnResume += () => bools[j] = true;
 
             _system.Register(unit, mode[Mathf.Min(i, mode.Length - 1)]);
         }
@@ -58,14 +58,14 @@ public class PauseTester : MonoBehaviour
     private class Unit : IPauseable
     {
         public Action OnPause;
-        public Action OnResue;
+        public Action OnResume;
         public void Pause()
         {
             OnPause?.Invoke();
         }
         public void Resume()
         {
-            OnResue?.Invoke();
+            OnResume?.Invoke();
         }
     }
 }
