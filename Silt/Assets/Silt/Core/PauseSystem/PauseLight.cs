@@ -16,7 +16,7 @@ namespace Silt.Pause
             _pauseables = DictionaryPool<IPauseable, byte>.Get();
         }
         public T CurrentEnum => (T)Enum.ToObject(typeof(T), _reasonBits);
-        public uint CurrentBits => _reasonBits;
+        public byte CurrentBits => _reasonBits;
         public bool IsPaused()
             => _reasonBits != 0;
         public bool IsPaused(T filter)
