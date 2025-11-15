@@ -9,7 +9,7 @@ namespace Silt.Pause
         public PauseBroker()
         {
             int enumSize = PauseUtility.GetEnumSize<T>();
-            if (enumSize > sizeof(byte))
+            if (enumSize > BYTE_SIZE)
             {
                 throw new InvalidOperationException($"PauseBroker only supports enums with an underlying type of byte.\nActual size of generic type '{typeof(T).Name}' is {enumSize} bytes.");
             }
@@ -151,7 +151,7 @@ namespace Silt.Pause
             => (data & (1 << index)) != 0;
 
         private bool _isDisposed = false;
-        private const int BYTE_SIZE = sizeof(byte) * 8;
+        private const int BYTE_SIZE = sizeof(byte);
         private byte _reasonBits = 0;
         private Dictionary<int, HashSet<IPauseable>> _pausables;
     }
