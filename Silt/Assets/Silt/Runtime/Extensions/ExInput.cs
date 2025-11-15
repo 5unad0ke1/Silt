@@ -2,7 +2,7 @@
 
 namespace Silt
 {
-    public static class InputExtension
+    public static class ExInput
     {
         /// <summary>
         /// GetKeyを短くした拡張関数
