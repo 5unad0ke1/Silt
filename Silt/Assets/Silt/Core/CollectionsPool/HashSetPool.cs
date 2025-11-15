@@ -24,15 +24,15 @@ namespace Silt
 
         public static void Free(HashSet<T> hashSet)
         {
-            if (hashSet is null)
-            {
-                throw new ArgumentNullException(nameof(hashSet));
-            }
             lock (_lock)
             {
+                if (hashSet is null)
+                {
+                    throw new ArgumentNullException(nameof(hashSet));
+                }
                 if (!_busy.Contains(hashSet))
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException("HashSet not in busy set.", nameof(hashSet));
                 }
 
                 hashSet.Clear();
