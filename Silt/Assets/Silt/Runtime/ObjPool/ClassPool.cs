@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Assets.Silt.Runtime.ObjPool
+namespace Silt.ObjPool
 {
     public static class ClassPool<T> where T : class, new()
     {
@@ -17,10 +17,10 @@ namespace Assets.Silt.Runtime.ObjPool
             {
                 if (_free.Count == 0)
                 {
-                    _free.Push(new());
+                    _free.Enqueue(new());
                 }
 
-                var array = _free.Pop();
+                var array = _free.Dequeue();
 
                 _busy.Add(array);
 
@@ -39,12 +39,12 @@ namespace Assets.Silt.Runtime.ObjPool
 
                 _busy.Remove(list);
 
-                _free.Push(list);
+                _free.Enqueue(list);
             }
         }
 
         private readonly static object _lock;
-        private readonly static Stack<T> _free;
+        private readonly static Queue<T> _free;
         private readonly static HashSet<T> _busy;
     }
 }
