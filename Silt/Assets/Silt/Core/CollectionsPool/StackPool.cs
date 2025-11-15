@@ -32,7 +32,7 @@ namespace Silt
             {
                 if (!_busy.Contains(stack))
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException("Stack not in busy set.", nameof(stack));
                 }
 
                 stack.Clear();
