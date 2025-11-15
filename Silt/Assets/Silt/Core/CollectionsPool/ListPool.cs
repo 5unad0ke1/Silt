@@ -32,7 +32,7 @@ namespace Silt
             {
                 if (!_busy.Contains(list))
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException("List not in busy set.", nameof(list));
                 }
 
                 list.Clear();
