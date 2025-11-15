@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Silt
+namespace Silt.Runtime
 {
     [System.Serializable]
     public sealed class InterfacePointer<T> where T : class
