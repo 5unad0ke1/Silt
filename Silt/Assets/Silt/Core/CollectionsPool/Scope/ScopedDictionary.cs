@@ -3,19 +3,33 @@ using System.Collections.Generic;
 
 namespace Silt.Core.CollectionsPool
 {
-    public readonly struct ScopedDictionary<TKey, TValue> : IDisposable
+    public struct ScopedDictionary<TKey, TValue> : IDisposable
     {
         internal ScopedDictionary(Dictionary<TKey, TValue> dictionary)
         {
-            Dictionary = dictionary;
+            _isDisposed = false;
+            _value = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
+        }
+        public readonly Dictionary<TKey, TValue> Value
+        {
+            get
+            {
+                if (_isDisposed)
+                    throw new ObjectDisposedException(nameof(ScopedDictionary<TKey, TValue>));
+                return _value;
+            }
         }
         public void Dispose()
         {
-            Dictionary?.Free();
-        }
-        public readonly Dictionary<TKey, TValue> Dictionary;
+            if (_isDisposed)
+                return;
+            _isDisposed = true;
 
-        public static implicit operator Dictionary<TKey, TValue>(ScopedDictionary<TKey, TValue> scopedStack)
-            => scopedStack.Dictionary;
+            _value.Free();
+            _value = null;
+        }
+
+        private bool _isDisposed;
+        private Dictionary<TKey, TValue> _value;
     }
 }

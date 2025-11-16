@@ -3,19 +3,32 @@ using System.Collections.Generic;
 
 namespace Silt.Core.CollectionsPool
 {
-    public readonly struct ScopedQueue<T> : IDisposable
+    public struct ScopedQueue<T> : IDisposable
     {
         internal ScopedQueue(Queue<T> queue)
         {
-            Queue = queue;
+            _isDisposed = false;
+            _value = queue ?? throw new ArgumentNullException(nameof(queue));
+        }
+        public readonly Queue<T> Value
+        {
+            get
+            {
+                if (_isDisposed)
+                    throw new ObjectDisposedException(nameof(ScopedQueue<T>));
+                return _value;
+            }
         }
         public void Dispose()
         {
-            Queue?.Free();
-        }
-        public readonly Queue<T> Queue;
+            if (_isDisposed)
+                return;
+            _isDisposed = true;
 
-        public static implicit operator Queue<T>(ScopedQueue<T> scopedStack)
-            => scopedStack.Queue;
+            _value.Free();
+            _value = null;
+        }
+        private Queue<T> _value;
+        private bool _isDisposed;
     }
 }

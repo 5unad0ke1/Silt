@@ -3,19 +3,32 @@ using System.Collections.Generic;
 
 namespace Silt.Core.CollectionsPool
 {
-    public readonly struct ScopedHashSet<T> : IDisposable
+    public struct ScopedHashSet<T> : IDisposable
     {
         internal ScopedHashSet(HashSet<T> hashSet)
         {
-            HashSet = hashSet;
+            _isDisposed = false;
+            _value = hashSet ?? throw new ArgumentNullException(nameof(hashSet));
+        }
+        public readonly HashSet<T> Value
+        {
+            get
+            {
+                if (_isDisposed)
+                    throw new ObjectDisposedException(nameof(ScopedHashSet<T>));
+                return _value;
+            }
         }
         public void Dispose()
         {
-            HashSet?.Free();
-        }
-        public readonly HashSet<T> HashSet;
+            if (_isDisposed)
+                return;
+            _isDisposed = true;
 
-        public static implicit operator HashSet<T>(ScopedHashSet<T> scopedStack)
-            => scopedStack.HashSet;
+            _value.Free();
+            _value = null;
+        }
+        private HashSet<T> _value;
+        private bool _isDisposed;
     }
 }
