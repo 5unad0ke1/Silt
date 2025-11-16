@@ -1,7 +1,8 @@
+using Silt.Core.CollectionsPool;
 using System;
 using System.Collections.Generic;
 
-namespace Silt
+namespace Silt.Core
 {
     public sealed class ObjectPool<T> : IDisposable where T : class
     {
