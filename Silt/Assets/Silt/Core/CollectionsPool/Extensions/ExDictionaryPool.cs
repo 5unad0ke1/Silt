@@ -1,7 +1,6 @@
-using Silt.Core.CollectionsPool;
 using System.Collections.Generic;
 
-namespace Silt
+namespace Silt.Core.CollectionsPool
 {
     /// <summary>
     /// Extensions for <see cref="DictionaryPool{TKey, TValue}"/>
