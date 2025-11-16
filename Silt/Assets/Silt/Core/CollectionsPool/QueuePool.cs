@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Silt
+namespace Silt.Core.CollectionsPool
 {
     public static class QueuePool<T>
     {
@@ -20,6 +20,10 @@ namespace Silt
 
                 return queue;
             }
+        }
+        public static ScopedQueue<T> GetScoped()
+        {
+            return new(Get());
         }
 
         public static void Free(Queue<T> queue)

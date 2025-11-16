@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Silt
+namespace Silt.Core.CollectionsPool
 {
     public static class HashSetPool<T>
     {
@@ -20,6 +20,10 @@ namespace Silt
 
                 return hashSet;
             }
+        }
+        public static ScopedHashSet<T> GetScoped()
+        {
+            return new(Get());
         }
 
         public static void Free(HashSet<T> hashSet)

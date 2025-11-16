@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Silt
+namespace Silt.Core.CollectionsPool
 {
     public static class DictionaryPool<TKey, TValue>
     {
@@ -20,6 +20,10 @@ namespace Silt
 
                 return dictionary;
             }
+        }
+        public static ScopedDictionary<TKey, TValue> GetScoped()
+        {
+            return new(Get());
         }
         public static void Free(Dictionary<TKey, TValue> dictionary)
         {

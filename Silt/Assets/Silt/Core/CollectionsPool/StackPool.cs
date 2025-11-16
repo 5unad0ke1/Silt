@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Silt
+namespace Silt.Core.CollectionsPool
 {
     public static class StackPool<T>
     {
@@ -21,7 +21,10 @@ namespace Silt
                 return stack;
             }
         }
-
+        public static ScopedStack<T> GetScoped()
+        {
+            return new(Get());
+        }
         public static void Free(Stack<T> stack)
         {
             if (stack is null)

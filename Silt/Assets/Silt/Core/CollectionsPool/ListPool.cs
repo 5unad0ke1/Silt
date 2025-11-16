@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Silt
+namespace Silt.Core.CollectionsPool
 {
     public static class ListPool<T>
     {
@@ -20,6 +20,10 @@ namespace Silt
 
                 return array;
             }
+        }
+        public static ScopedList<T> GetScoped()
+        {
+            return new(Get());
         }
 
         public static void Free(List<T> list)
