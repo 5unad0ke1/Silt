@@ -21,7 +21,10 @@ namespace Silt.Core.CollectionsPool
                 return stack;
             }
         }
-
+        public static ScopedStack<T> GetScoped()
+        {
+            return new(Get());
+        }
         public static void Free(Stack<T> stack)
         {
             if (stack is null)

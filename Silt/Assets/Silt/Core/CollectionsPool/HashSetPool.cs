@@ -21,6 +21,10 @@ namespace Silt.Core.CollectionsPool
                 return hashSet;
             }
         }
+        public static ScopedHashSet<T> GetScoped()
+        {
+            return new(Get());
+        }
 
         public static void Free(HashSet<T> hashSet)
         {

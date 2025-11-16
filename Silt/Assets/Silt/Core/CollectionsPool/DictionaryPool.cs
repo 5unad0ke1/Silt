@@ -21,6 +21,10 @@ namespace Silt.Core.CollectionsPool
                 return dictionary;
             }
         }
+        public static ScopedDictionary<TKey, TValue> GetScoped()
+        {
+            return new(Get());
+        }
         public static void Free(Dictionary<TKey, TValue> dictionary)
         {
             if (dictionary is null)

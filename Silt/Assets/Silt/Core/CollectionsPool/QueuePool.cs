@@ -21,6 +21,10 @@ namespace Silt.Core.CollectionsPool
                 return queue;
             }
         }
+        public static ScopedQueue<T> GetScoped()
+        {
+            return new(Get());
+        }
 
         public static void Free(Queue<T> queue)
         {

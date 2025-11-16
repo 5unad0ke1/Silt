@@ -21,6 +21,10 @@ namespace Silt.Core.CollectionsPool
                 return array;
             }
         }
+        public static ScopedList<T> GetScoped()
+        {
+            return new(Get());
+        }
 
         public static void Free(List<T> list)
         {
