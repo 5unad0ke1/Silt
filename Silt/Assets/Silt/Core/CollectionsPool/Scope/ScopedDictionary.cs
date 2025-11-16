@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Silt.Core.CollectionsPool
 {
-    public struct ScopedDictionary<TKey, TValue> : IDisposable
+    public readonly struct ScopedDictionary<TKey, TValue> : IDisposable
     {
         internal ScopedDictionary(Dictionary<TKey, TValue> dictionary)
         {
