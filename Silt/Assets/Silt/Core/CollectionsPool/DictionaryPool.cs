@@ -1,3 +1,4 @@
+using Silt.Core.CollectionsPool.Debug;
 using System;
 using System.Collections.Generic;
 
@@ -5,6 +6,12 @@ namespace Silt.Core.CollectionsPool
 {
     public static class DictionaryPool<TKey, TValue>
     {
+        static DictionaryPool()
+        {
+            DictionaryTrackingManager.Register<TKey, TValue>(
+                () => _free.Count,
+                () => _busy.Count);
+        }
         public static Dictionary<TKey, TValue> Get()
         {
             lock (_lock)

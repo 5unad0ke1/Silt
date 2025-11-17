@@ -1,3 +1,4 @@
+using Silt.Core.CollectionsPool.Debug;
 using System;
 using System.Collections.Generic;
 
@@ -5,6 +6,12 @@ namespace Silt.Core.CollectionsPool
 {
     public static class StackPool<T>
     {
+        static StackPool()
+        {
+            StackTrackingManager.Register<T>(
+                () => _free.Count,
+                () => _busy.Count);
+        }
         public static Stack<T> Get()
         {
             lock (_lock)
