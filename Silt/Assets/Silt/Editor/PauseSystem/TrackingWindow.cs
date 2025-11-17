@@ -28,6 +28,8 @@ namespace Silt.Editor.PauseSystem
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
             foreach (var info in trackings)
             {
+                if (info.Key == null)
+                    continue;
                 var value = info.Value;
 
                 string name = string.IsNullOrWhiteSpace(value.Name) ? "default" : value.Name;
