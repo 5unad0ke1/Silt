@@ -1,4 +1,5 @@
 using Silt.Core.CollectionsPool;
+using Silt.Core.PauseSystem.Debug;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -7,7 +8,7 @@ namespace Silt.Core
 {
     public sealed class PauseBroker<T> : IDisposable where T : unmanaged, Enum
     {
-        public PauseBroker()
+        public PauseBroker(string name = "defalut")
         {
             int enumSize = PauseUtility.GetEnumSize<T>();
             if (enumSize > BYTE_SIZE)
@@ -15,6 +16,8 @@ namespace Silt.Core
                 throw new InvalidOperationException($"PauseBroker only supports enums with an underlying type of byte.\nActual size of generic type '{typeof(T).Name}' is {enumSize} bytes.");
             }
             _pausables = DictionaryPool<int, HashSet<IPauseable>>.Get();
+
+            PauseSystemTracking.Register(this, typeof(T), typeof(PauseBroker<>), name, () => _reasonBits);
         }
         public bool IsPaused()
         {
@@ -128,6 +131,8 @@ namespace Silt.Core
                 item.Value?.Free();
             }
             _pausables.Free();
+
+            PauseSystemTracking.Unregister(this);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

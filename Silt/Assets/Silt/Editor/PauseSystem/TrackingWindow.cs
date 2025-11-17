@@ -1,0 +1,67 @@
+using Silt.Core.PauseSystem.Debug;
+using System;
+using UnityEditor;
+using UnityEngine;
+
+namespace Silt.Editor.PauseSystem
+{
+    public class TrackingWindow : EditorWindow
+    {
+
+        [MenuItem("Silt/Tracking Window/PauseSystem")]
+        public static void OpnenWindow()
+        {
+            GetWindow<TrackingWindow>("PauseSystem Tracking");
+        }
+        private void OnGUI()
+        {
+
+            GUILayout.Label("PauseSystem Tracking", EditorStyles.boldLabel);
+
+            var trackings = PauseSystemTracking.Infos;
+
+            if (trackings.Count == 0)
+            {
+                GUILayout.Label("No tracking info available.");
+                return;
+            }
+            _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
+            foreach (var info in trackings)
+            {
+                var value = info.Value;
+
+                string name = string.IsNullOrWhiteSpace(value.Name) ? "default" : value.Name;
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"Name: {name}", GUILayout.Width(200));
+                GUILayout.Label($"Type: {value.Type}", GUILayout.Width(200));
+                GUILayout.Label($"Flag: {Convert.ToString(value.GetFlag(), 2).PadLeft(8, '0')}", GUILayout.Width(200));
+                GUILayout.EndHorizontal();
+            }
+
+            EditorGUILayout.EndScrollView();
+        }
+        private void OnEnable()
+        {
+            // 毎フレーム呼ばれるイベントに登録
+            EditorApplication.update += UpdateWindow;
+        }
+
+        private void OnDisable()
+        {
+            EditorApplication.update -= UpdateWindow;
+        }
+        private void UpdateWindow()
+        {
+            _timer += Time.unscaledDeltaTime;
+            if (_timer > 0.1f) // 1秒ごとに更新
+            {
+                _timer = 0f;
+                Repaint(); // ウィンドウを再描画
+            }
+        }
+
+        private float _timer = 0f;
+        private Vector2 _scrollPos;
+    }
+}

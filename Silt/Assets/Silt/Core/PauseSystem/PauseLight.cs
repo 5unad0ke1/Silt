@@ -1,4 +1,5 @@
 using Silt.Core.CollectionsPool;
+using Silt.Core.PauseSystem.Debug;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -7,7 +8,7 @@ namespace Silt.Core
 {
     public sealed class PauseLight<T> : IDisposable where T : unmanaged, Enum
     {
-        public PauseLight()
+        public PauseLight(string name = "default")
         {
             int enumSize = PauseUtility.GetEnumSize<T>();
             if (enumSize > sizeof(byte))
@@ -15,6 +16,8 @@ namespace Silt.Core
                 throw new InvalidOperationException($"PauseLight only supports enums with an underlying type of byte.\nActual size of generic type '{typeof(T).Name}' is {enumSize} bytes.");
             }
             _pauseables = DictionaryPool<IPauseable, byte>.Get();
+
+            PauseSystemTracking.Register(this, typeof(T), typeof(PauseLight<>), name, () => _reasonBits);
         }
         public T CurrentEnum => (T)Enum.ToObject(typeof(T), _reasonBits);
         public byte CurrentBits => _reasonBits;
@@ -73,6 +76,8 @@ namespace Silt.Core
             _isDisposed = true;
 
             _pauseables.Free();
+
+            PauseSystemTracking.Unregister(this);
         }
         public override string ToString()
              => $"{typeof(T).Name}: {_reasonBits:X2} ({CurrentEnum})";
