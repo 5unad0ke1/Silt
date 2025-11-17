@@ -17,7 +17,9 @@ namespace Silt.Core
             }
             _pausables = DictionaryPool<int, HashSet<IPauseable>>.Get();
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             PauseSystemTracking.Register(this, typeof(T), typeof(PauseBroker<>), name, () => _reasonBits);
+#endif
         }
         public bool IsPaused()
         {
@@ -132,7 +134,9 @@ namespace Silt.Core
             }
             _pausables.Free();
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             PauseSystemTracking.Unregister(this);
+#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

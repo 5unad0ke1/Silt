@@ -8,9 +8,11 @@ namespace Silt.Core.CollectionsPool
     {
         static QueuePool()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             QueueTrackingManager.Register<T>(
                 () => _free.Count,
                 () => _busy.Count);
+#endif
         }
         public static Queue<T> Get()
         {

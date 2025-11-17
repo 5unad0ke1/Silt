@@ -8,9 +8,11 @@ namespace Silt.Core.CollectionsPool
     {
         static ListPool()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             ListTrackingManager.Register<T>(
                 () => _free.Count,
                 () => _busy.Count);
+#endif
         }
         public static List<T> Get()
         {

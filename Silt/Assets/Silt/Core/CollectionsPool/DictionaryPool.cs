@@ -8,9 +8,11 @@ namespace Silt.Core.CollectionsPool
     {
         static DictionaryPool()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             DictionaryTrackingManager.Register<TKey, TValue>(
                 () => _free.Count,
                 () => _busy.Count);
+#endif
         }
         public static Dictionary<TKey, TValue> Get()
         {

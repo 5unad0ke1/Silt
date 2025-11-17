@@ -8,9 +8,11 @@ namespace Silt.Core.CollectionsPool
     {
         static HashSetPool()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             HashSetTrackingManager.Register<T>(
                 () => _free.Count,
                 () => _busy.Count);
+#endif
         }
         public static HashSet<T> Get()
         {

@@ -17,7 +17,9 @@ namespace Silt.Core
             }
             _pauseables = DictionaryPool<IPauseable, byte>.Get();
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             PauseSystemTracking.Register(this, typeof(T), typeof(PauseLight<>), name, () => _reasonBits);
+#endif
         }
         public T CurrentEnum => (T)Enum.ToObject(typeof(T), _reasonBits);
         public byte CurrentBits => _reasonBits;
@@ -77,7 +79,9 @@ namespace Silt.Core
 
             _pauseables.Free();
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             PauseSystemTracking.Unregister(this);
+#endif
         }
         public override string ToString()
              => $"{typeof(T).Name}: {_reasonBits:X2} ({CurrentEnum})";

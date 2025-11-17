@@ -8,9 +8,11 @@ namespace Silt.Core.CollectionsPool
     {
         static StackPool()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             StackTrackingManager.Register<T>(
                 () => _free.Count,
                 () => _busy.Count);
+#endif
         }
         public static Stack<T> Get()
         {
