@@ -9,7 +9,7 @@ public class TrackingWindow : EditorWindow
     [MenuItem("Silt/Tracking Window")]
     public static void OpnenWindow()
     {
-        GetWindow<TrackingWindow>("List Tracking");
+        GetWindow<TrackingWindow>("CollectionsPool Tracking");
     }
     private void OnGUI()
     {
