@@ -2,10 +2,20 @@ using System;
 
 namespace Silt.Core.CollectionsPool.Debug
 {
-    public struct TrackingInfo
+    public readonly struct TrackingInfo
     {
-        public Func<int> GetFreeCount;
-        public Func<int> GetBusyCount;
-        public Type Type;
+        internal TrackingInfo(
+            Func<int> getFreeCount,
+            Func<int> getBusyCount,
+            Type type)
+        {
+            GetFreeCount = getFreeCount;
+            GetBusyCount = getBusyCount;
+            Type = type;
+        }
+
+        public readonly Func<int> GetFreeCount;
+        public readonly Func<int> GetBusyCount;
+        public readonly Type Type;
     }
 }
