@@ -14,7 +14,11 @@ namespace Silt.Core.PauseSystem.Debug
             string name,
             Func<byte> getFlag)
         {
-            _infos[obj] = new TrackingInfo(name, flagType, type, getFlag);
+            _infos[obj] = new(
+                name,
+                flagType,
+                type,
+                getFlag);
         }
         internal static void Unregister(object obj)
         {
