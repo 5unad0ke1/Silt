@@ -22,13 +22,10 @@ namespace Silt.Core
 #endif
         }
         public bool IsPaused()
-        {
-            return _reasonBits != 0;
-        }
+            => _reasonBits != 0;
+
         public bool IsPaused(T filter)
-        {
-            return (_reasonBits & PauseUtility.ToBits(filter)) != 0;
-        }
+                => (_reasonBits & PauseUtility.ToBits(filter)) != 0;
         public void AddReason(T value)
         {
             if (_isDisposed)
