@@ -9,7 +9,7 @@ namespace Silt.CollectionsPool.Editor
     {
 
         [MenuItem("Window/CollectionsPool Tracker")]
-        public static void OpnenWindow()
+        public static void OpenWindow()
         {
             GetWindow<TrackingWindow>("CollectionsPool Tracker");
         }
