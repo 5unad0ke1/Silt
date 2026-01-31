@@ -8,7 +8,7 @@ namespace Silt.PauseSystem
 {
     public sealed class PauseBroker<T> : IDisposable where T : unmanaged, Enum
     {
-        public PauseBroker(string name = "defalut")
+        public PauseBroker(string name = "default")
         {
             int enumSize = PauseUtility.GetEnumSize<T>();
             if (enumSize > BYTE_SIZE)
