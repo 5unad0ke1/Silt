@@ -16,6 +16,7 @@ namespace Silt.CollectionsPool.Debug
                 ValueType = typeof(TValue)
             });
         }
+        private static readonly object _lock = new();
         private static readonly List<DictionaryTrackingInfo> _collections = new();
     }
 }

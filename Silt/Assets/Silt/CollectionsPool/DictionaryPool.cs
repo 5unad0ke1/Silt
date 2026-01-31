@@ -10,8 +10,20 @@ namespace Silt.CollectionsPool
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             DictionaryTrackingManager.Register<TKey, TValue>(
-                () => _free.Count,
-                () => _busy.Count);
+                () =>
+                {
+                    lock (_lock)
+                    {
+                        return _free.Count;
+                    }
+                },
+                () =>
+                {
+                    lock (_lock)
+                    {
+                        return _busy.Count;
+                    }
+                });
 #endif
         }
         public static Dictionary<TKey, TValue> Get()

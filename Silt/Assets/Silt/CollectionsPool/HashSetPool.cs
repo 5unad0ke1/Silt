@@ -10,8 +10,20 @@ namespace Silt.CollectionsPool
         {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             HashSetTrackingManager.Register<T>(
-                () => _free.Count,
-                () => _busy.Count);
+                () =>
+                {
+                    lock (_lock)
+                    {
+                        return _free.Count;
+                    }
+                },
+                () =>
+                {
+                    lock (_lock)
+                    {
+                        return _busy.Count;
+                    }
+                });
 #endif
         }
         public static HashSet<T> Get()
