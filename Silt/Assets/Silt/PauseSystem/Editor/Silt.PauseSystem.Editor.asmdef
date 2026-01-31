@@ -1,0 +1,18 @@
+{
+    "name": "Silt.PauseSystem.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:7706340241ddf1d4c836bb825fe5b3db"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
