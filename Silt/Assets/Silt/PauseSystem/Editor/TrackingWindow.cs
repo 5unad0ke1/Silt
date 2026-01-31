@@ -55,15 +55,14 @@ namespace Silt.PauseSystem.Editor
         }
         private void UpdateWindow()
         {
-            _timer += Time.unscaledDeltaTime;
-            if (_timer > 0.1f) // 1秒ごとに更新
+            if (EditorApplication.timeSinceStartup - _timer >= 0.1)
             {
-                _timer = 0f;
-                Repaint(); // ウィンドウを再描画
+                _timer = EditorApplication.timeSinceStartup;
+                Repaint();
             }
         }
 
-        private float _timer = 0f;
+        private double _timer = 0f;
         private Vector2 _scrollPos;
     }
 }

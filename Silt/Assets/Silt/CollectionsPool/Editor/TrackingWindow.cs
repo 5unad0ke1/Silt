@@ -82,15 +82,14 @@ namespace Silt.CollectionsPool.Editor
         }
         private void UpdateWindow()
         {
-            _timer += Time.unscaledDeltaTime;
-            if (_timer > 0.1f)
+            if (EditorApplication.timeSinceStartup - _timer >= 0.1)
             {
-                _timer = 0f;
+                _timer = EditorApplication.timeSinceStartup;
                 Repaint();
             }
         }
 
-        private float _timer = 0f;
+        private double _timer = 0f;
         private Vector2 _scrollPos;
     }
 }
