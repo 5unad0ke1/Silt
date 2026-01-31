@@ -1,7 +1,9 @@
 {
-    "name": "Silt.Runtime",
+    "name": "Silt.Services",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:fcb108389bd1cdb45915e811494aaac1"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -10,5 +12,5 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
-    "noEngineReferences": false
+    "noEngineReferences": true
 }

@@ -1,8 +1,12 @@
 {
-    "name": "Silt.Runtime",
+    "name": "Silt.CollectionsPool.Editor",
     "rootNamespace": "",
-    "references": [],
-    "includePlatforms": [],
+    "references": [
+        "GUID:fcb108389bd1cdb45915e811494aaac1"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
