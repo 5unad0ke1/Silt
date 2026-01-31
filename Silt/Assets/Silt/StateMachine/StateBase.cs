@@ -1,4 +1,4 @@
-﻿namespace Silt.Core
+﻿namespace Silt.StateMachine
 {
     public abstract class StateBase<TController, TState> : IState
     where TController : class
