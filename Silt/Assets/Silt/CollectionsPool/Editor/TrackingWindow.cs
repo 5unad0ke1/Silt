@@ -40,7 +40,6 @@ namespace Silt.CollectionsPool.Editor
         }
         private void OnEnable()
         {
-            // 毎フレーム呼ばれるイベントに登録
             EditorApplication.update += UpdateWindow;
         }
 
@@ -84,10 +83,10 @@ namespace Silt.CollectionsPool.Editor
         private void UpdateWindow()
         {
             _timer += Time.unscaledDeltaTime;
-            if (_timer > 0.1f) // 1秒ごとに更新
+            if (_timer > 0.1f)
             {
                 _timer = 0f;
-                Repaint(); // ウィンドウを再描画
+                Repaint();
             }
         }
 
