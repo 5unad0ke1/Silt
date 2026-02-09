@@ -1,3 +1,4 @@
+using Silt.Services.Debug;
 using System;
 using System.Collections.Generic;
 
@@ -37,6 +38,9 @@ namespace Silt.Services
             }
             _disposable.Clear();
             _locators.Clear();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            TrackingManager.Clear();
+#endif
         }
         public static bool TryInject<T0>(IInjectable<T0> injectable)
         {
@@ -44,6 +48,9 @@ namespace Silt.Services
                 return false;
 
             injectable.Inject(t0);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            TrackingManager.IncreaseInjectCount<T0>();
+#endif
             return true;
         }
         public static bool TryInject<T0, T1>(IInjectable<T0, T1> injectable)
@@ -54,6 +61,10 @@ namespace Silt.Services
                 return false;
 
             injectable.Inject(t0, t1);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            TrackingManager.IncreaseInjectCount<T0>();
+            TrackingManager.IncreaseInjectCount<T1>();
+#endif
             return true;
         }
         public static bool TryInject<T0, T1, T2>(IInjectable<T0, T1, T2> injectable)
@@ -66,6 +77,11 @@ namespace Silt.Services
                 return false;
 
             injectable.Inject(t0, t1, t2);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            TrackingManager.IncreaseInjectCount<T0>();
+            TrackingManager.IncreaseInjectCount<T1>();
+            TrackingManager.IncreaseInjectCount<T2>();
+#endif
             return true;
         }
         public static bool TryInject<T0, T1, T2, T3>(IInjectable<T0, T1, T2, T3> injectable)
@@ -80,6 +96,12 @@ namespace Silt.Services
                 return false;
 
             injectable.Inject(t0, t1, t2, t3);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            TrackingManager.IncreaseInjectCount<T0>();
+            TrackingManager.IncreaseInjectCount<T1>();
+            TrackingManager.IncreaseInjectCount<T2>();
+            TrackingManager.IncreaseInjectCount<T3>();
+#endif
             return true;
         }
 

@@ -1,3 +1,4 @@
+using Silt.Services.Debug;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,7 +14,6 @@ namespace Silt.Services.Editor
         }
         private void OnGUI()
         {
-            GUILayout.Label("ManualLocator Tracking", EditorStyles.boldLabel);
             var trackings = ManualLocator.KeyValuePairs;
 
             if (trackings.Count == 0)
@@ -23,10 +23,14 @@ namespace Silt.Services.Editor
             }
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
 
+            GUILayout.Label("Registered", EditorStyles.boldLabel);
             foreach (var item in trackings.Keys)
             {
+                TrackingManager.KeyValuePairs.TryGetValue(item, out int injectedCount);
+
                 GUILayout.BeginHorizontal();
                 GUILayout.Label($"Name: {item.FullName}");
+                GUILayout.Label($"Injected Count: {injectedCount}");
                 GUILayout.EndHorizontal();
             }
             EditorGUILayout.EndScrollView();
