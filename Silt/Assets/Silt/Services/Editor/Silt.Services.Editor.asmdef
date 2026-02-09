@@ -1,0 +1,18 @@
+{
+    "name": "Silt.Services.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c22235db6a852bc48ac3fc415a254575"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
