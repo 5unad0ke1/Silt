@@ -8,7 +8,14 @@ namespace Silt.Services.Debug
         public static IReadOnlyDictionary<Type, int> KeyValuePairs => _injectCounter;
         public static void IncreaseInjectCount<T>()
         {
-            _injectCounter[typeof(T)]++;
+            if (_injectCounter.ContainsKey(typeof(T)))
+            {
+                _injectCounter[typeof(T)]++;
+            }
+            else
+            {
+                _injectCounter.Add(typeof(T), 1);
+            }
         }
         public static void Clear()
         {
