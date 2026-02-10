@@ -32,15 +32,28 @@ namespace Silt.Services
         }
         public static void Clear()
         {
+            _exceptions?.Clear();
+            bool hasExeption = false;
             foreach (var item in _disposable)
-            {
-                item.Dispose();
-            }
+                try
+                {
+                    item.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    hasExeption = true;
+                    _exceptions ??= new();
+                    _exceptions.Add(ex);
+                }
             _disposable.Clear();
             _locators.Clear();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             TrackingManager.Clear();
 #endif
+            if (hasExeption)
+            {
+                throw new AggregateException("One or more errors occurred during disposal.", _exceptions);
+            }
         }
         public static void Inject<T0>(IInjectable<T0> injectable)
         {
@@ -93,5 +106,6 @@ namespace Silt.Services
         }
         private static readonly Dictionary<Type, object> _locators = new();
         private static readonly HashSet<IDisposable> _disposable = new();
+        private static List<Exception> _exceptions;
     }
 }
