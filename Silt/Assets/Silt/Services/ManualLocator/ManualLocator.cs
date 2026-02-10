@@ -42,74 +42,42 @@ namespace Silt.Services
             TrackingManager.Clear();
 #endif
         }
-        public static bool TryInject<T0>(IInjectable<T0> injectable)
+        public static void Inject<T0>(IInjectable<T0> injectable)
         {
-            if (!TryGetValue(out T0 t0))
-                return false;
+            TryGetValue(out T0 t0);
 
             injectable.Inject(t0);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            TrackingManager.IncreaseInjectCount<T0>();
-#endif
-            return true;
         }
-        public static bool TryInject<T0, T1>(IInjectable<T0, T1> injectable)
+        public static void Inject<T0, T1>(IInjectable<T0, T1> injectable)
         {
-            if (!TryGetValue(out T0 t0))
-                return false;
-            if (!TryGetValue(out T1 t1))
-                return false;
+            TryGetValue(out T0 t0);
+            TryGetValue(out T1 t1);
 
             injectable.Inject(t0, t1);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            TrackingManager.IncreaseInjectCount<T0>();
-            TrackingManager.IncreaseInjectCount<T1>();
-#endif
-            return true;
         }
-        public static bool TryInject<T0, T1, T2>(IInjectable<T0, T1, T2> injectable)
+        public static void Inject<T0, T1, T2>(IInjectable<T0, T1, T2> injectable)
         {
-            if (!TryGetValue(out T0 t0))
-                return false;
-            if (!TryGetValue(out T1 t1))
-                return false;
-            if (!TryGetValue(out T2 t2))
-                return false;
+            TryGetValue(out T0 t0);
+            TryGetValue(out T1 t1);
+            TryGetValue(out T2 t2);
 
             injectable.Inject(t0, t1, t2);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            TrackingManager.IncreaseInjectCount<T0>();
-            TrackingManager.IncreaseInjectCount<T1>();
-            TrackingManager.IncreaseInjectCount<T2>();
-#endif
-            return true;
         }
-        public static bool TryInject<T0, T1, T2, T3>(IInjectable<T0, T1, T2, T3> injectable)
+        public static void Inject<T0, T1, T2, T3>(IInjectable<T0, T1, T2, T3> injectable)
         {
-            if (!TryGetValue(out T0 t0))
-                return false;
-            if (!TryGetValue(out T1 t1))
-                return false;
-            if (!TryGetValue(out T2 t2))
-                return false;
-            if (!TryGetValue(out T3 t3))
-                return false;
+            TryGetValue(out T0 t0);
+            TryGetValue(out T1 t1);
+            TryGetValue(out T2 t2);
+            TryGetValue(out T3 t3);
 
             injectable.Inject(t0, t1, t2, t3);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            TrackingManager.IncreaseInjectCount<T0>();
-            TrackingManager.IncreaseInjectCount<T1>();
-            TrackingManager.IncreaseInjectCount<T2>();
-            TrackingManager.IncreaseInjectCount<T3>();
-#endif
-            return true;
         }
 
-        private static bool TryGetValue<T>(out T value)
+        private static void TryGetValue<T>(out T value)
         {
             value = default;
             if (!_locators.TryGetValue(typeof(T), out var result))
-                return false;
+                throw new InvalidOperationException(typeof(T).FullName);
             if (result is T instance)
             {
                 value = instance;
@@ -118,7 +86,10 @@ namespace Silt.Services
             {
                 throw new InvalidCastException($"Registered service of type {result.GetType().Name} cannot be cast to {typeof(T).Name}.");
             }
-            return true;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            TrackingManager.IncreaseInjectCount<T>();
+#endif
         }
         private static readonly Dictionary<Type, object> _locators = new();
         private static readonly HashSet<IDisposable> _disposable = new();
