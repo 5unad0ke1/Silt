@@ -44,36 +44,36 @@ namespace Silt.Services
         }
         public static void Inject<T0>(IInjectable<T0> injectable)
         {
-            TryGetValue(out T0 t0);
+            GetValue(out T0 t0);
 
             injectable.Inject(t0);
         }
         public static void Inject<T0, T1>(IInjectable<T0, T1> injectable)
         {
-            TryGetValue(out T0 t0);
-            TryGetValue(out T1 t1);
+            GetValue(out T0 t0);
+            GetValue(out T1 t1);
 
             injectable.Inject(t0, t1);
         }
         public static void Inject<T0, T1, T2>(IInjectable<T0, T1, T2> injectable)
         {
-            TryGetValue(out T0 t0);
-            TryGetValue(out T1 t1);
-            TryGetValue(out T2 t2);
+            GetValue(out T0 t0);
+            GetValue(out T1 t1);
+            GetValue(out T2 t2);
 
             injectable.Inject(t0, t1, t2);
         }
         public static void Inject<T0, T1, T2, T3>(IInjectable<T0, T1, T2, T3> injectable)
         {
-            TryGetValue(out T0 t0);
-            TryGetValue(out T1 t1);
-            TryGetValue(out T2 t2);
-            TryGetValue(out T3 t3);
+            GetValue(out T0 t0);
+            GetValue(out T1 t1);
+            GetValue(out T2 t2);
+            GetValue(out T3 t3);
 
             injectable.Inject(t0, t1, t2, t3);
         }
 
-        private static void TryGetValue<T>(out T value)
+        private static void GetValue<T>(out T value)
         {
             value = default;
             if (!_locators.TryGetValue(typeof(T), out var result))
