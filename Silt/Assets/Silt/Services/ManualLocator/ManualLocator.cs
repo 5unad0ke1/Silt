@@ -9,50 +9,56 @@ namespace Silt.Services
         public static IReadOnlyDictionary<Type, object> KeyValuePairs => _locators;
         public static bool TryRegister<T>(T obj) where T : class
         {
-            if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
-
-            var type = typeof(T);
-
-            if (_locators.ContainsKey(type))
+            lock (_lock)
             {
-                return false;
-            }
+                if (obj == null)
+                    throw new ArgumentNullException(nameof(obj));
 
-            if (obj is IDisposable disposable)
-            {
-                if (!_disposable.Add(disposable))
+                var type = typeof(T);
+
+                if (_locators.ContainsKey(type))
                 {
-                    throw new InvalidOperationException($"Same IDisposable object already registered: type = {disposable.GetType().FullName}");
+                    return false;
                 }
-            }
 
-            _locators[type] = obj;
-            return true;
+                if (obj is IDisposable disposable)
+                {
+                    if (!_disposable.Add(disposable))
+                    {
+                        throw new InvalidOperationException($"Same IDisposable object already registered: type = {disposable.GetType().FullName}");
+                    }
+                }
+
+                _locators[type] = obj;
+                return true;
+            }
         }
         public static void Clear()
         {
-            _exceptions?.Clear();
-            bool hasExeption = false;
-            foreach (var item in _disposable)
-                try
-                {
-                    item.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    hasExeption = true;
-                    _exceptions ??= new();
-                    _exceptions.Add(ex);
-                }
-            _disposable.Clear();
-            _locators.Clear();
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            TrackingManager.Clear();
-#endif
-            if (hasExeption)
+            lock (_lock)
             {
-                throw new AggregateException("One or more errors occurred during disposal.", _exceptions);
+                _exceptions?.Clear();
+                bool hasException = false;
+                foreach (var item in _disposable)
+                    try
+                    {
+                        item.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        hasException = true;
+                        _exceptions ??= new();
+                        _exceptions.Add(ex);
+                    }
+                _disposable.Clear();
+                _locators.Clear();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                TrackingManager.Clear();
+#endif
+                if (hasException)
+                {
+                    throw new AggregateException("One or more errors occurred during disposal.", _exceptions);
+                }
             }
         }
         public static void Inject<T0>(IInjectable<T0> injectable)
@@ -88,24 +94,28 @@ namespace Silt.Services
 
         private static void GetValue<T>(out T value)
         {
-            value = default;
-            if (!_locators.TryGetValue(typeof(T), out var result))
-                throw new InvalidOperationException(typeof(T).FullName);
-            if (result is T instance)
+            lock (_lock)
             {
-                value = instance;
-            }
-            else
-            {
-                throw new InvalidCastException($"Registered service of type {result.GetType().Name} cannot be cast to {typeof(T).Name}.");
-            }
+                value = default;
+                if (!_locators.TryGetValue(typeof(T), out var result))
+                    throw new InvalidOperationException(typeof(T).FullName);
+                if (result is T instance)
+                {
+                    value = instance;
+                }
+                else
+                {
+                    throw new InvalidCastException($"Registered service of type {result.GetType().Name} cannot be cast to {typeof(T).Name}.");
+                }
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            TrackingManager.IncreaseInjectCount<T>();
+                TrackingManager.IncreaseInjectCount<T>();
 #endif
+            }
         }
         private static readonly Dictionary<Type, object> _locators = new();
         private static readonly HashSet<IDisposable> _disposable = new();
         private static List<Exception> _exceptions;
+        private static readonly object _lock = new();
     }
 }
