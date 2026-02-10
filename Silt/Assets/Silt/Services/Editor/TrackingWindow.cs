@@ -1,24 +1,20 @@
-using Silt.PauseSystem.Debug;
-using System;
+using Silt.Services.Debug;
 using UnityEditor;
 using UnityEngine;
 
-namespace Silt.PauseSystem.Editor
+namespace Silt.Services.Editor
 {
     public sealed class TrackingWindow : EditorWindow
     {
 
-        [MenuItem("Window/PauseSystem Tracker")]
+        [MenuItem("Window/ManualLocator Tracker")]
         public static void OpenWindow()
         {
-            GetWindow<TrackingWindow>("PauseSystem Tracker");
+            GetWindow<TrackingWindow>("ManualLocator Tracker");
         }
         private void OnGUI()
         {
-
-            GUILayout.Label("PauseSystem Tracking", EditorStyles.boldLabel);
-
-            var trackings = PauseSystemTracking.Infos;
+            var trackings = ManualLocator.KeyValuePairs;
 
             if (trackings.Count == 0)
             {
@@ -26,21 +22,17 @@ namespace Silt.PauseSystem.Editor
                 return;
             }
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
-            foreach (var info in trackings)
-            {
-                if (info.Key == null)
-                    continue;
-                var value = info.Value;
 
-                string name = string.IsNullOrWhiteSpace(value.Name) ? "default" : value.Name;
+            GUILayout.Label("Registered", EditorStyles.boldLabel);
+            foreach (var item in trackings.Keys)
+            {
+                TrackingManager.KeyValuePairs.TryGetValue(item, out int injectedCount);
 
                 GUILayout.BeginHorizontal();
-                GUILayout.Label($"Name: {name}", GUILayout.Width(200));
-                GUILayout.Label($"Type: {value.Type}", GUILayout.Width(200));
-                GUILayout.Label($"Flag: {Convert.ToString(value.GetFlag(), 2).PadLeft(8, '0')}", GUILayout.Width(200));
+                GUILayout.Label($"Name: {item.FullName}");
+                GUILayout.Label($"Injected Count: {injectedCount}");
                 GUILayout.EndHorizontal();
             }
-
             EditorGUILayout.EndScrollView();
         }
         private void OnEnable()
