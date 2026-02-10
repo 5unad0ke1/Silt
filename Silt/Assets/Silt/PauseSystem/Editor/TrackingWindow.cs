@@ -45,7 +45,6 @@ namespace Silt.PauseSystem.Editor
         }
         private void OnEnable()
         {
-            // 毎フレーム呼ばれるイベントに登録
             EditorApplication.update += UpdateWindow;
         }
 
