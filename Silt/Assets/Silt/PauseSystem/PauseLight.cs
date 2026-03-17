@@ -84,7 +84,7 @@ namespace Silt.PauseSystem
              => $"{typeof(T).Name}: {_reasonBits:X2} ({CurrentEnum})";
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void UpdatePauseState(Dictionary<IPauseable, byte> data, in byte previousBits, in byte currentBits)
+        private static void UpdatePauseState(Dictionary<IPauseable, byte> data, byte previousBits, byte currentBits)
         {
             bool wasPaused;
             bool isPaused;
