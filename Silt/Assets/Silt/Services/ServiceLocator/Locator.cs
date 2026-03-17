@@ -1,4 +1,3 @@
-using Silt.CollectionsPool;
 using System;
 using System.Collections.Generic;
 
@@ -8,8 +7,8 @@ namespace Silt.Services
     {
         public Locator()
         {
-            _locators = DictionaryPool<Type, object>.Get();
-            _disposables = ListPool<IDisposable>.Get();
+            _locators = new();
+            _disposables = new();
         }
         public void Register<T>(T obj) where T : class
         {
@@ -69,13 +68,11 @@ namespace Silt.Services
                     _disposables[^(i + 1)]?.Dispose();
                 }
 
-                _disposables.Free();
                 _disposables = null;
             }
 
             if (_locators is not null)
             {
-                _locators.Free();
                 _locators = null;
             }
         }
